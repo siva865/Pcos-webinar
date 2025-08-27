@@ -23,7 +23,7 @@ const Testimonialreversal = () => {
 
   // ✅ Fetch from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/testimonials")
+    fetch("https://pcos-webinar.onrender.com/api/testimonials")
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -58,7 +58,7 @@ const Testimonialreversal = () => {
       setTestimonials(updated);
 
       try {
-        await fetch(`http://localhost:5000/api/testimonials/${editIndex}`, {
+        await fetch(`https://pcos-webinar.onrender.com/api/testimonials/${editIndex}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newEntry),
@@ -72,7 +72,7 @@ const Testimonialreversal = () => {
       setExpanded(prev => [...prev, false]);
 
       try {
-        await fetch("http://localhost:5000/api/testimonials", {
+        await fetch("https://pcos-webinar.onrender.com/api/testimonials", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newEntry),
@@ -90,7 +90,7 @@ const Testimonialreversal = () => {
   // ✅ Delete Testimonial
   const handleDelete = async (id) => {
   try {
-    await fetch(`http://localhost:5000/api/testimonials/${id}`, { method: "DELETE" });
+    await fetch(`https://pcos-webinar.onrender.com/api/testimonials/${id}`, { method: "DELETE" });
     // update state locally
     setTestimonials(testimonials.filter(t => t._id !== id));
     setExpanded(expanded.slice(0, testimonials.length - 1));

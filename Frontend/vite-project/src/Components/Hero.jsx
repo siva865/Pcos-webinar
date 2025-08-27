@@ -19,7 +19,7 @@ const Hero = () => {
   // Load webinar details
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/webinars")
+      .get("https://pcos-webinar.onrender.com/api/webinars")
       .then((res) => {
         if (res.data) {
           if (res.data.webinarDate) setWebinarDate(new Date(res.data.webinarDate));
@@ -55,12 +55,12 @@ const Hero = () => {
     setLoading(true);
     try {
       // 1️⃣ Save booking first
-      const res = await axios.post("http://localhost:5000/api/bookings", formData);
+      const res = await axios.post("https://pcos-webinar.onrender.com/api/bookings", formData);
       console.log("Booking response:", res.data);
       const bookingId = res.data.booking._id;
 
       // 2️⃣ Update payment status in MongoDB (as you asked)
-      await axios.put(`http://localhost:5000/api/bookings/${bookingId}/pay`);
+      await axios.put(`https://pcos-webinar.onrender.com/api/bookings/${bookingId}/pay`);
 
       // 3️⃣ Open your Razorpay Payment Link in a new tab
       const paymentLink =
@@ -83,7 +83,7 @@ const Hero = () => {
   const handleUpdateDate = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/webinars", {
+      const res = await axios.post("https://pcos-webinar.onrender.com/api/webinars", {
         webinarDate: newDate,
         price: Number(price),
       });

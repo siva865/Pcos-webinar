@@ -19,7 +19,7 @@ const Testimonialpregnancy = () => {
 
   const fileInputRef = useRef();
 
-  const backendURL = "http://localhost:5000"; // replace with your deployed backend if needed
+  const backendURL = "https://pcos-webinar.onrender.com"; // replace with your deployed backend if needed
 
   // ---------------- Fetch Testimonials ----------------
   useEffect(() => {
