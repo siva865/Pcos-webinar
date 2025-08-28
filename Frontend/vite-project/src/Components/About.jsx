@@ -24,7 +24,6 @@ const About = () => {
             transition={{ duration: 1, repeat: Infinity }}
           >
             Ayisafarhan
-            {/* Moving underline */}
             <motion.span
               className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#FF4B91] rounded-full"
               animate={{ x: [0, 10, -10, 0] }}
@@ -35,15 +34,31 @@ const About = () => {
 
         {/* Description */}
         <p className="mb-4 leading-relaxed text-base md:text-lg">
-          I’m a <span className="font-bold text-[#4b2671]">Gold Medalist</span> and{" "}
-          <span className="font-bold text-[#4b2671]">University Topper</span> with over{" "}
-          <span className="font-bold text-[#FF4B91]">5 years of experience</span> as a PCOS and fertility dietitian.
-          I specialize in <span className="italic">Tamil-based diet plans</span> that are practical, affordable, and effective.
+          I’m a <span className="font-bold text-[#4b2671]">PCOS & Fertility Dietitian</span> with{" "}
+          <span className="font-bold text-[#FF4B91]">5+ years of experience</span> helping women restore their health naturally.
+        </p>
+
+        <p className="mb-4 leading-relaxed text-base md:text-lg">
+          🎓 A <span className="font-bold text-[#4b2671]">University Topper & Gold Medalist</span>, 
+          I also created a mobile app for weight loss during my postgraduation, blending science with technology.
+        </p>
+
+        <p className="mb-4 leading-relaxed text-base md:text-lg">
+          As one of the few PCOS-specific dietitians in Tamil Nadu, I offer 
+          <span className="italic"> Tamil-based, practical, and affordable diet plans</span>. 
+          I’ve supported <span className="font-bold text-[#663398]">1,000+ women worldwide</span> 
+          (India, Malaysia, Saudi Arabia, Dubai, Singapore, Canada & more) to reverse PCOS, regulate periods, and achieve natural pregnancy. 
+          I’ve worked as a Consultant Dietitian in leading hospitals in Madurai and at Nalam Hospital, Sivagangai.
+        </p>
+
+        <p className="mb-4 leading-relaxed text-base md:text-lg">
+          💙 Having personally struggled with PCOS and infertility for 2 years, 
+          I overcame it through diet, exercise, yoga, and lifestyle changes, and conceived naturally in just 3 months.
         </p>
 
         <p className="leading-relaxed text-base md:text-lg">
-          I help women regain their periods naturally, improve fertility, and achieve healthy weight loss without crash diets or harmful shortcuts.
-          Having faced PCOS and infertility myself, I conceived naturally in just 3 months without medical interventions.
+          ✨ Today, I combine professional expertise and lived experience to help women reverse PCOS, balance hormones, 
+          improve fertility, and achieve healthy weight loss — without crash diets or unnecessary medications.
         </p>
 
         {/* Stats Section */}

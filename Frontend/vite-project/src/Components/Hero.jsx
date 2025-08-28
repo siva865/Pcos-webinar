@@ -5,25 +5,41 @@ import { AdminContext } from "./Admin";
 
 const Hero = () => {
   const { isAdmin } = useContext(AdminContext);
-  const [webinarDate, setWebinarDate] = useState(null);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [newDate, setNewDate] = useState("");
-  const [status, setStatus] = useState("");
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [showAdminBox, setShowAdminBox] = useState(false);
-  const [price, setPrice] = useState("99"); // default 99
-  const [showWhatsApp, setShowWhatsApp] = useState(false); // ✅ new state
 
-  // Load webinar details
+  // Webinar details from database
+  const [webinar, setWebinar] = useState({
+    date: "", // ISO string
+    day: "",
+    time: "",
+    language: "",
+    price: "99",
+  });
+
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showAdminBox, setShowAdminBox] = useState(false);
+  const [status, setStatus] = useState("");
+
+  // New fields for admin update
+  const [newDate, setNewDate] = useState("");
+  const [newDay, setNewDay] = useState("");
+  const [newTime, setNewTime] = useState("");
+  const [newLanguage, setNewLanguage] = useState("");
+  const [newPrice, setNewPrice] = useState("99");
+
+  // Load webinar details from backend
   useEffect(() => {
     axios
       .get("https://pcos-webinar.onrender.com/api/webinars")
       .then((res) => {
-        if (res.data) {
-          if (res.data.webinarDate) setWebinarDate(new Date(res.data.webinarDate));
-          if (res.data.price !== undefined && res.data.price !== null) setPrice(String(res.data.price));
+        if (res.data && res.data.webinar) {
+          setWebinar({
+            date: res.data.webinar.date || "",
+            day: res.data.webinar.day || "",
+            time: res.data.webinar.time || "",
+            language: res.data.webinar.language || "",
+            price: String(res.data.webinar.price || "99"),
+          });
         }
       })
       .catch(() => console.log("Failed to fetch webinar details"));
@@ -32,9 +48,10 @@ const Hero = () => {
   // Countdown logic
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!webinarDate) return setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      if (!webinar.date) return setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      const webinarDateTime = new Date(`${webinar.date}T${webinar.time}`).getTime();
       const now = new Date().getTime();
-      const distance = webinarDate - now;
+      const distance = webinarDateTime - now;
       if (distance > 0) {
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
@@ -47,49 +64,36 @@ const Hero = () => {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [webinarDate]);
+  }, [webinar.date, webinar.time]);
 
-  // Booking form submit
-  const handleBooking = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // 1️⃣ Save booking first
-      const res = await axios.post("https://pcos-webinar.onrender.com/api/bookings", formData);
-      console.log("Booking response:", res.data);
-      const bookingId = res.data.booking._id;
+  // Handle Razorpay booking
+  const handleBooking = () => {
+    const paymentLink = "   https://rzp.io/rzp/EAP6tcY";
+    window.open(paymentLink, "_blank");
 
-      // 2️⃣ Update payment status in MongoDB (as you asked)
-      await axios.put(`https://pcos-webinar.onrender.com/api/bookings/${bookingId}/pay`);
-
-      // 3️⃣ Open your Razorpay Payment Link in a new tab
-      const paymentLink =
-        "https://razorpay.me/@ayisafarhan?amount=KxK8ikz%2BGFZ8lMDydVeeuA%3D%3D";
-      window.open(paymentLink, "_blank");
-
-      // 4️⃣ Show WhatsApp link after 5 sec
-      setTimeout(() => {
-        setShowWhatsApp(true);
-      }, 5000);
-    } catch (err) {
-      console.error(err);
-      alert("Error processing booking/payment!");
-    } finally {
-      setLoading(false);
-    }
+    // Show WhatsApp link after 5 sec
+    setTimeout(() => setShowWhatsApp(true), 5000);
   };
 
   // Admin update webinar
-  const handleUpdateDate = async (e) => {
+  const handleUpdateWebinar = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("https://pcos-webinar.onrender.com/api/webinars", {
-        webinarDate: newDate,
-        price: Number(price),
+        date: newDate,
+        day: newDay,
+        time: newTime,
+        language: newLanguage,
+        price: Number(newPrice),
       });
       if (res.data.success) {
-        setWebinarDate(new Date(res.data.webinar.webinarDate));
-        setPrice(String(res.data.webinar.price));
+        setWebinar({
+          date: res.data.webinar.date,
+          day: res.data.webinar.day,
+          time: res.data.webinar.time,
+          language: res.data.webinar.language,
+          price: String(res.data.webinar.price),
+        });
         setStatus("✅ Webinar updated successfully!");
       } else {
         setStatus("❌ Failed to update webinar");
@@ -107,12 +111,24 @@ const Hero = () => {
         transition={{ duration: 1 }}
         className="text-center w-full max-w-lg"
       >
-        <motion.h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 leading-snug">
-          Tired of Hormonal Pills?
+        {/* Headline */}
+        <motion.h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-snug">
+          Ayisafarhan’s Step-by-Step Plan to Reverse PCOS and Get Pregnant Naturally
         </motion.h1>
+
+        {/* Subheading */}
         <motion.h2 className="text-base sm:text-lg md:text-2xl mb-6 leading-relaxed">
           From Irregular Periods to Pregnancy — The Permanent Solution for PCOS & Infertility (No Supplements or Medicine)
         </motion.h2>
+
+        {/* Date, Day, Time, Language */}
+        <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+          <p><span className="font-bold">Date:</span> {webinar.date ? new Date(webinar.date).toLocaleDateString() : "TBA"}</p>
+          <p><span className="font-bold">Day:</span> {webinar.day || "TBA"}</p>
+          <p><span className="font-bold">Time:</span> {webinar.time || "TBA"}</p>
+          <p><span className="font-bold">Language:</span> {webinar.language || "TBA"}</p>
+          <p className="text-red-600 font-semibold mt-2">*Limited seats available*</p>
+        </div>
 
         {/* Countdown */}
         <motion.div className="flex justify-center gap-2 sm:gap-4 mb-6 flex-wrap">
@@ -127,68 +143,20 @@ const Hero = () => {
         {/* Book Now */}
         <motion.button
           className="bg-[#663398] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition text-sm sm:text-base"
-          onClick={() => setShowForm(true)}
+          onClick={handleBooking}
         >
-          Book Now ₹{price && !isNaN(price) ? price : 99} Only
+          Book Now ₹{webinar.price && !isNaN(webinar.price) ? webinar.price : 99} Only
         </motion.button>
         <p className="mt-2 text-xs sm:text-sm">🎁 Free Bonus for All Attendees</p>
 
-        {/* Booking Form */}
-        {showForm && (
-          <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-              <button
-                className="absolute top-2 right-3 text-gray-500 hover:text-gray-700"
-                onClick={() => setShowForm(false)}
-              >
-                ✕
-              </button>
-              <h3 className="text-lg font-bold mb-4">Complete Your Booking</h3>
-              <form onSubmit={handleBooking} className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="border px-4 py-2 rounded-lg w-full"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="border px-4 py-2 rounded-lg w-full"
-                  required
-                />
-                <input
-                  type="tel"
-                  placeholder="Your Phone Number"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="border px-4 py-2 rounded-lg w-full"
-                  required
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-[#663398] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition w-full"
-                >
-                  {loading ? "Processing..." : `Submit & Pay ₹${price && !isNaN(price) ? price : 99}`}
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* ✅ WhatsApp link modal */}
+        {/* WhatsApp modal */}
         {showWhatsApp && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="bg-white rounded-xl shadow-lg p-6 text-center max-w-md">
               <h3 className="text-xl font-bold text-green-600 mb-4">🎉 Payment Successful!</h3>
               <p className="mb-4">Click below to join our WhatsApp group 👇</p>
               <a
-                href="  https://chat.whatsapp.com/JKHjnZYLKT76mMwUoY0UT6?mode=ac_t"
+                href="https://chat.whatsapp.com/JKHjnZYLKT76mMwUoY0UT6?mode=ac_t"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition inline-block"
@@ -218,19 +186,42 @@ const Hero = () => {
                   ✕
                 </button>
                 <h3 className="text-lg font-bold mb-4">Update Webinar Details</h3>
-                <form onSubmit={handleUpdateDate} className="flex flex-col gap-4">
+                <form onSubmit={handleUpdateWebinar} className="flex flex-col gap-4">
                   <input
-                    type="datetime-local"
+                    type="date"
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
                     className="border px-4 py-2 rounded-lg"
                     required
                   />
                   <input
+                    type="text"
+                    placeholder="Day"
+                    value={newDay}
+                    onChange={(e) => setNewDay(e.target.value)}
+                    className="border px-4 py-2 rounded-lg"
+                    required
+                  />
+                  <input
+                    type="time"
+                    value={newTime}
+                    onChange={(e) => setNewTime(e.target.value)}
+                    className="border px-4 py-2 rounded-lg"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Language"
+                    value={newLanguage}
+                    onChange={(e) => setNewLanguage(e.target.value)}
+                    className="border px-4 py-2 rounded-lg"
+                    required
+                  />
+                  <input
                     type="number"
-                    placeholder="Webinar Price in ₹"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value || "99")}
+                    placeholder="Price in ₹"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value || "99")}
                     className="border px-4 py-2 rounded-lg"
                   />
                   <button

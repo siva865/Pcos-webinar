@@ -23,14 +23,24 @@ const WhatYouLearn = () => {
       className="bg-gradient-to-r from-[#663398] to-[#9c4dcc] text-white px-6 py-16"
     >
       {/* Heading */}
-      <motion.h2
-        className="text-4xl font-extrabold mb-10 text-center"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        What You’ll <span className="text-[#FFB7C5]">Learn</span> in This Session
-      </motion.h2>
+<motion.h2
+  className="text-4xl font-extrabold mb-4 text-center"
+  initial={{ y: -50, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 1 }}
+>
+  What You’ll <span className="text-[#FFB7C5]">Learn</span> in This Session
+</motion.h2>
+
+{/* Highlighted Line */}
+<motion.p
+  className="text-center text-lg md:text-xl font-semibold text-[#FFB7C5] mb-10"
+  initial={{ y: -20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 1, delay: 0.3 }}
+>
+  E - Book for all Webinar Attendees
+</motion.p>
 
       {/* Topics List */}
       <motion.ul
@@ -63,7 +73,7 @@ const WhatYouLearn = () => {
           <img
   src={meditationImg}
   alt="Meditation Guide"
-  className="w-32 h-32 object-contain rounded-full mb-4 shadow-md bg-white"
+  className="w-24 h-32 object-contain mb-4 shadow-md bg-white"
 />
 
           <p className="text-lg font-semibold text-center">
@@ -79,7 +89,7 @@ const WhatYouLearn = () => {
           <img
             src={yogaImg}
             alt="Yoga for PCOS"
-            className="w-32 h-32 object-cover rounded-full mb-4 shadow-md"
+            className="w-24 h-32 object-cover  mb-4 shadow-md"
           />
           <p className="text-lg font-semibold text-center">
             🧍 Yoga for PCOS Guide –{" "}
