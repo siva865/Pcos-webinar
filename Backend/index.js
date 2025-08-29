@@ -2,41 +2,33 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const Razorpay = require("razorpay");
-const path = require("path");
 const multer = require("multer");
-const fs = require("fs");
 require("dotenv").config();
+
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// --------- Serve Uploads Folder (Important!) ----------
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ----------------- MongoDB Connection -----------------
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log("❌ MongoDB Error:", err));
 
-// ----------------- Multer Setup -----------------
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "uploads/testimonials");
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+// ----------------- Cloudinary Config -----------------
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_URL.split("@")[1].split("/")[0],
+  api_key: process.env.CLOUDINARY_URL.split("://")[1].split(":")[0],
+  api_secret: process.env.CLOUDINARY_URL.split(":")[2].split("@")[0],
 });
+
+// ----------------- Multer Memory Storage -----------------
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // ----------------- Schemas -----------------
-const adminSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-});
+const adminSchema = new mongoose.Schema({ username: String, password: String });
 const Admin = mongoose.model("Admin", adminSchema);
 
 const webinarSchema = new mongoose.Schema({
@@ -57,12 +49,7 @@ const testimonialSchema = new mongoose.Schema({
 const Testimonial = mongoose.model("Testimonial", testimonialSchema);
 
 const pcosSchema = new mongoose.Schema(
-  {
-    name: String,
-    city: String,
-    review: String,
-    photo: String,
-  },
+  { name: String, city: String, review: String, photo: String },
   { collection: "pcos" }
 );
 const PcosTestimonial = mongoose.model("PcosTestimonial", pcosSchema);
@@ -130,13 +117,27 @@ app.get("/api/testimonials", async (req, res) => {
 app.post("/api/testimonials", upload.single("photo"), async (req, res) => {
   try {
     const { name, city, review } = req.body;
-    const photo = req.file ? `/uploads/testimonials/${req.file.filename}` : null;
+    let photoUrl = null;
 
-    const newTestimonial = new Testimonial({ name, city, review, photo });
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "general_testimonials" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      photoUrl = result.secure_url;
+    }
+
+    const newTestimonial = new Testimonial({ name, city, review, photo: photoUrl });
     await newTestimonial.save();
     res.json(newTestimonial);
   } catch (err) {
-    res.status(500).json({ message: "Error saving testimonial" });
+    res.status(500).json({ message: "Error saving testimonial", error: err.message });
   }
 });
 
@@ -144,12 +145,25 @@ app.put("/api/testimonials/:id", upload.single("photo"), async (req, res) => {
   try {
     const { name, city, review } = req.body;
     const updateData = { name, city, review };
-    if (req.file) updateData.photo = `/uploads/testimonials/${req.file.filename}`;
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "general_testimonials" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      updateData.photo = result.secure_url;
+    }
 
     const updated = await Testimonial.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: "Error updating testimonial" });
+    res.status(500).json({ message: "Error updating testimonial", error: err.message });
   }
 });
 
@@ -175,13 +189,27 @@ app.get("/api/pcos", async (req, res) => {
 app.post("/api/pcos", upload.single("photo"), async (req, res) => {
   try {
     const { name, city, review } = req.body;
-    const photo = req.file ? `/uploads/testimonials/${req.file.filename}` : null;
+    let photoUrl = null;
 
-    const newTestimonial = new PcosTestimonial({ name, city, review, photo });
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "pcos_testimonials" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      photoUrl = result.secure_url;
+    }
+
+    const newTestimonial = new PcosTestimonial({ name, city, review, photo: photoUrl });
     await newTestimonial.save();
     res.json(newTestimonial);
   } catch (err) {
-    res.status(500).json({ message: "Error saving PCOS testimonial" });
+    res.status(500).json({ message: "Error saving PCOS testimonial", error: err.message });
   }
 });
 
@@ -189,12 +217,25 @@ app.put("/api/pcos/:id", upload.single("photo"), async (req, res) => {
   try {
     const { name, city, review } = req.body;
     const updateData = { name, city, review };
-    if (req.file) updateData.photo = `/uploads/testimonials/${req.file.filename}`;
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "pcos_testimonials" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      updateData.photo = result.secure_url;
+    }
 
     const updated = await PcosTestimonial.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: "Error updating PCOS testimonial" });
+    res.status(500).json({ message: "Error updating PCOS testimonial", error: err.message });
   }
 });
 

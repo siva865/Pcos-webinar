@@ -9,7 +9,7 @@ const Testimonialpregnancy = () => {
   const [newTestimonial, setNewTestimonial] = useState({
     name: "",
     city: "",
-    text: "",
+    review: "",
     photo: null,
     preview: "",
   });
@@ -18,8 +18,7 @@ const Testimonialpregnancy = () => {
   const [editingIndex, setEditingIndex] = useState(null);
 
   const fileInputRef = useRef();
-
-  const backendURL = "https://pcos-webinar.onrender.com"; // replace with your deployed backend if needed
+  const backendURL = "https://pcos-webinar.onrender.com"; // Replace with your backend URL
 
   // ---------------- Fetch Testimonials ----------------
   useEffect(() => {
@@ -62,7 +61,7 @@ const Testimonialpregnancy = () => {
       const formData = new FormData();
       formData.append("name", newTestimonial.name);
       formData.append("city", newTestimonial.city);
-      formData.append("review", newTestimonial.text);
+      formData.append("review", newTestimonial.review);
       if (newTestimonial.photo) {
         formData.append("photo", newTestimonial.photo);
       }
@@ -79,7 +78,7 @@ const Testimonialpregnancy = () => {
       }
 
       fetchTestimonials();
-      setNewTestimonial({ name: "", city: "", text: "", photo: null, preview: "" });
+      setNewTestimonial({ name: "", city: "", review: "", photo: null, preview: "" });
       setShowForm(false);
       setEditingIndex(null);
     } catch (err) {
@@ -92,9 +91,9 @@ const Testimonialpregnancy = () => {
     setNewTestimonial({
       name: t.name,
       city: t.city,
-      text: t.review,
+      review: t.review,
       photo: null,
-      preview: `${backendURL}${t.photo}`,
+      preview: t.photo || "",
     });
     setEditingIndex(index);
     setShowForm(true);
@@ -136,15 +135,15 @@ const Testimonialpregnancy = () => {
             animate={{ x: ["0%", "-100%"] }}
             transition={{ ease: "linear", duration: 40, repeat: Infinity }}
           >
- {testimonials.map((testimonial, index) => (
-  <motion.div
-    key={`${testimonial._id || testimonial.id}-${index}`}
-    className="min-w-[280px] max-w-sm bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between"
-  >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={`${testimonial._id}-${index}`}
+                className="min-w-[280px] max-w-sm bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between"
+              >
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-28 h-28 rounded-full overflow-hidden shadow-md border-4 border-[#FFB7C5] mb-3">
+                  <div className="w-40 h-40 rounded-lg overflow-hidden shadow-md border-4 border-[#FFB7C5] mb-3">
                     <img
-                      src={testimonial.photo ? `${backendURL}${testimonial.photo}` : "/images/dummy.jpg"}
+                      src={newTestimonial.preview && editingIndex === index ? newTestimonial.preview : testimonial.photo || "/images/dummy.jpg"}
                       alt={testimonial.name}
                       className="w-full h-full object-cover"
                     />
@@ -237,8 +236,8 @@ const Testimonialpregnancy = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Testimonial</label>
               <textarea
-                name="text"
-                value={newTestimonial.text}
+                name="review"
+                value={newTestimonial.review}
                 onChange={handleChange}
                 required
                 rows="4"
@@ -278,7 +277,11 @@ const Testimonialpregnancy = () => {
             <div className="flex justify-between pt-4">
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingIndex(null);
+                  setNewTestimonial({ name: "", city: "", review: "", photo: null, preview: "" });
+                }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Cancel
