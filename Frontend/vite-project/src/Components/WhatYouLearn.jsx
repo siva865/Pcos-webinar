@@ -23,24 +23,14 @@ const WhatYouLearn = () => {
       className="bg-gradient-to-r from-[#663398] to-[#9c4dcc] text-white px-6 py-16"
     >
       {/* Heading */}
-<motion.h2
-  className="text-4xl font-extrabold mb-4 text-center"
-  initial={{ y: -50, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 1 }}
->
-  What You’ll <span className="text-[#FFB7C5]">Learn</span> in This Session
-</motion.h2>
-
-{/* Highlighted Line */}
-<motion.p
-  className="text-center text-lg md:text-xl font-semibold text-[#FFB7C5] mb-10"
-  initial={{ y: -20, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 1, delay: 0.3 }}
->
-  E - Book for all Webinar Attendees
-</motion.p>
+      <motion.h2
+        className="text-4xl font-extrabold mb-4 text-center"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        What You’ll <span className="text-[#FFB7C5]">Learn</span> in This Session
+      </motion.h2>
 
       {/* Topics List */}
       <motion.ul
@@ -61,9 +51,19 @@ const WhatYouLearn = () => {
         ))}
       </motion.ul>
 
+      {/* 🔽 E-Book Line moved here */}
+      <motion.p
+        className="text-center text-lg md:text-xl font-semibold text-[#FFB7C5] mb-10 mt-12"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, delay: 0.3 }}
+      >
+        📖 E - Book for all Webinar Attendees
+      </motion.p>
+
       {/* Bonus Section with Images */}
       <motion.div
-        className="mt-12 grid md:grid-cols-2 gap-6"
+        className="grid md:grid-cols-2 gap-6"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, delay: 0.7 }}
@@ -71,11 +71,10 @@ const WhatYouLearn = () => {
         {/* Meditation Bonus */}
         <div className="bg-white/20 rounded-xl p-6 flex flex-col items-center shadow-xl">
           <img
-  src={meditationImg}
-  alt="Meditation Guide"
-  className="w-24 h-32 object-contain mb-4 shadow-md bg-white"
-/>
-
+            src={meditationImg}
+            alt="Meditation Guide"
+            className="w-24 h-32 object-contain mb-4 shadow-md bg-white"
+          />
           <p className="text-lg font-semibold text-center">
             🧘 Meditation & Stress-Free Living Guide –{" "}
             <span className="text-[#FFB7C5]">
@@ -89,7 +88,7 @@ const WhatYouLearn = () => {
           <img
             src={yogaImg}
             alt="Yoga for PCOS"
-            className="w-24 h-32 object-cover  mb-4 shadow-md"
+            className="w-24 h-32 object-cover mb-4 shadow-md"
           />
           <p className="text-lg font-semibold text-center">
             🧍 Yoga for PCOS Guide –{" "}

@@ -143,13 +143,20 @@ const Hero = () => {
         </motion.div>
 
         {/* Book Now */}
-        <motion.button
-          className="bg-[#663398] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition text-sm sm:text-base"
-          onClick={handleBooking}
-        >
-          Book Now ₹{webinar.price && !isNaN(webinar.price) ? webinar.price : 99} Only
-        </motion.button>
-        <p className="mt-2 text-xs sm:text-sm">🎁 Free Bonus for All Attendees</p>
+<motion.button
+  className="bg-[#663398] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition text-base"
+  onClick={handleBooking}
+  animate={{
+    scale: [1, 1.15, 1], // 👈 zoom in (1 → 1.15) then zoom out (1.15 → 1)
+  }}
+  transition={{
+    duration: 1.5,       // speed
+    repeat: Infinity,    // infinite loop
+    ease: "easeInOut"
+  }}
+>
+  Book Now ₹{webinar.price && !isNaN(webinar.price) ? webinar.price : 99} Only
+</motion.button>
 
         {/* WhatsApp modal */}
         {showWhatsApp && (
