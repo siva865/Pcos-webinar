@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { motion } from "framer-motion";
 import axios from "axios";
 import { AdminContext } from "./Admin";
 
@@ -62,9 +61,7 @@ const Testimonialpregnancy = () => {
       formData.append("name", newTestimonial.name);
       formData.append("city", newTestimonial.city);
       formData.append("review", newTestimonial.review);
-      if (newTestimonial.photo) {
-        formData.append("photo", newTestimonial.photo);
-      }
+      if (newTestimonial.photo) formData.append("photo", newTestimonial.photo);
 
       if (editingIndex !== null) {
         const id = testimonials[editingIndex]._id;
@@ -113,76 +110,69 @@ const Testimonialpregnancy = () => {
   };
 
   return (
-    <section className="py-20 px-6 sm:px-10 md:px-20 lg:px-32 bg-gradient-to-r from-[#FFB7C5] to-[#FFB7C5]/20 overflow-hidden">
+    <section className="py-20 px-6 sm:px-10 md:px-20 lg:px-32 bg-gradient-to-r from-[#FFB7C5]/10 to-[#FFB7C5]/20 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold text-center text-[#663398] mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-[#663398] mb-6">
           PCOS to Pregnancy Success Stories
-        </motion.h2>
+        </h2>
 
         <p className="text-center text-[#663398] mb-12">
           Miracles happen when determination meets the right guidance
         </p>
 
-        {/* Testimonials Slider */}
-        <div className="relative overflow-hidden">
-          <motion.div
-            className="flex gap-6 py-4"
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{ ease: "linear", duration: 40, repeat: Infinity }}
-          >
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={`${testimonial._id}-${index}`}
-                className="min-w-[280px] max-w-sm bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between"
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-40 h-40 rounded-lg overflow-hidden shadow-md border-4 border-[#FFB7C5] mb-3">
-                    <img
-                      src={newTestimonial.preview && editingIndex === index ? newTestimonial.preview : testimonial.photo || "/images/dummy.jpg"}
-                      alt={testimonial.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-bold text-lg text-[#663398]">{testimonial.name}</h3>
-                  <p className="text-sm text-gray-500">{testimonial.city}</p>
+        {/* Testimonials Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={`${testimonial._id}-${index}`}
+              className="bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full h-48 rounded-lg overflow-hidden shadow-md mb-3">
+                  <img
+                    src={newTestimonial.preview && editingIndex === index ? newTestimonial.preview : testimonial.photo || "/images/dummy.jpg"}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                <h3 className="font-bold text-lg text-[#663398]">{testimonial.name}</h3>
+                <p className="text-sm text-gray-500">{testimonial.city}</p>
+              </div>
 
-                <p className="text-gray-700 text-sm mt-3 italic">
-                  {expandedIndex === index
-                    ? testimonial.review
-                    : testimonial.review.substring(0, 120) + "..."}
-                </p>
+              <p className="text-gray-700 text-sm mt-3 italic">
+                {expandedIndex === index
+                  ? testimonial.review
+                  : testimonial.review.length > 120
+                  ? testimonial.review.substring(0, 120) + "..."
+                  : testimonial.review}
+              </p>
 
+              {testimonial.review.length > 120 && (
                 <button
                   onClick={() => toggleExpand(index)}
                   className="text-[#663398] font-semibold text-xs mt-2 hover:text-[#FFB7C5] transition"
                 >
                   {expandedIndex === index ? "Read Less" : "Read More"}
                 </button>
+              )}
 
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="px-3 py-1 bg-[#FFB7C5] text-[#663398] rounded-full text-xs font-bold shadow">
-                    🎉 Pregnancy Success
-                  </span>
-                  {isAdmin && (
-                    <div className="flex gap-2">
-                      <button onClick={() => handleEdit(index)} className="text-blue-600 text-xs">
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(testimonial._id)} className="text-red-600 text-xs">
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              <div className="mt-4 flex justify-between items-center">
+                <span className="px-3 py-1 bg-[#FFB7C5]/50 text-[#663398] rounded-full text-xs font-bold shadow">
+                  🎉 Pregnancy Success
+                </span>
+                {isAdmin && (
+                  <div className="flex gap-2">
+                    <button onClick={() => handleEdit(index)} className="text-blue-600 text-xs">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(testimonial._id)} className="text-red-600 text-xs">
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Admin Add/Edit Button */}
@@ -199,11 +189,9 @@ const Testimonialpregnancy = () => {
 
         {/* Add/Edit Form */}
         {showForm && (
-          <motion.form
+          <form
             onSubmit={handleSubmit}
             className="mt-8 max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
           >
             <h3 className="text-xl font-bold text-[#663398] mb-4 text-center">
               {editingIndex !== null ? "Edit Testimonial" : "Add New Testimonial"}
@@ -263,7 +251,7 @@ const Testimonialpregnancy = () => {
                   className="hidden"
                 />
                 {newTestimonial.preview && (
-                  <div className="w-16 h-16 rounded-lg overflow-hidden border">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden border">
                     <img
                       src={newTestimonial.preview}
                       alt="Preview"
@@ -293,7 +281,7 @@ const Testimonialpregnancy = () => {
                 {editingIndex !== null ? "Update" : "Submit"}
               </button>
             </div>
-          </motion.form>
+          </form>
         )}
       </div>
     </section>

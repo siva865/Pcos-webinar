@@ -112,14 +112,16 @@ const Hero = () => {
         className="text-center w-full max-w-lg"
       >
         {/* Headline */}
-        <motion.h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-snug">
-          Ayisafarhan’s Step-by-Step Plan to Reverse PCOS and Get Pregnant Naturally
-        </motion.h1>
-
-        {/* Subheading */}
+        
+       
         <motion.h2 className="text-base sm:text-lg md:text-2xl mb-6 leading-relaxed">
           From Irregular Periods to Pregnancy — The Permanent Solution for PCOS & Infertility (No Supplements or Medicine)
         </motion.h2>
+
+ {/* Subheading */}
+        <motion.h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-snug">
+          Ayisafarhan’s Step-by-Step Plan to Reverse PCOS and Get Pregnant Naturally
+        </motion.h1>
 
         {/* Date, Day, Time, Language */}
         <div className="bg-white shadow-md rounded-lg p-4 mb-6">
