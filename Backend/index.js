@@ -33,8 +33,7 @@ const Admin = mongoose.model("Admin", adminSchema);
 
 const webinarSchema = new mongoose.Schema({
   date: { type: String, required: true },
-  day: { type: String, required: true },
-  time: { type: String, required: true },
+    dayTime: { type: String, required: true },
   language: { type: String, required: true },
   price: { type: Number, default: 99 },
 });
@@ -70,6 +69,7 @@ app.post("/api/admin/login", async (req, res) => {
   }
 });
 
+
 // ----------------- Webinar APIs -----------------
 app.get("/api/webinars", async (req, res) => {
   try {
@@ -82,18 +82,22 @@ app.get("/api/webinars", async (req, res) => {
 
 app.post("/api/webinars", async (req, res) => {
   try {
-    const { date, day, time, language, price } = req.body;
+    const { date, dayTime, language, price } = req.body;
     let webinar = await Webinar.findOne();
 
     if (webinar) {
       webinar.date = date;
-      webinar.day = day;
-      webinar.time = time;
+      webinar.dayTime = dayTime;
       webinar.language = language;
       webinar.price = Number(price) || 99;
       await webinar.save();
     } else {
-      webinar = new Webinar({ date, day, time, language, price: Number(price) || 99 });
+      webinar = new Webinar({
+        date,
+        dayTime,
+        language,
+        price: Number(price) || 99,
+      });
       await webinar.save();
     }
 
@@ -103,7 +107,6 @@ app.post("/api/webinars", async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to save webinar" });
   }
 });
-
 // ----------------- General Testimonials APIs -----------------
 app.get("/api/testimonials", async (req, res) => {
   try {

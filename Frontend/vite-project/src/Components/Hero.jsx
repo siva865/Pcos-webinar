@@ -6,28 +6,23 @@ import { AdminContext } from "./Admin";
 const Hero = () => {
   const { isAdmin } = useContext(AdminContext);
 
-  // Webinar details from database
   const [webinar, setWebinar] = useState({
-    date: "", // ISO string
-    day: "",
-    time: "",
+    date: "",
+    dayTime: "",
     language: "",
     price: "99",
   });
 
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [showAdminBox, setShowAdminBox] = useState(false);
   const [status, setStatus] = useState("");
 
-  // New fields for admin update
   const [newDate, setNewDate] = useState("");
-  const [newDay, setNewDay] = useState("");
-  const [newTime, setNewTime] = useState("");
+  const [newDayTime, setNewDayTime] = useState("");
   const [newLanguage, setNewLanguage] = useState("");
   const [newPrice, setNewPrice] = useState("99");
 
-  // Load webinar details from backend
+  // ✅ Load webinar details
   useEffect(() => {
     axios
       .get("https://pcos-webinar.onrender.com/api/webinars")
@@ -35,8 +30,7 @@ const Hero = () => {
         if (res.data && res.data.webinar) {
           setWebinar({
             date: res.data.webinar.date || "",
-            day: res.data.webinar.day || "",
-            time: res.data.webinar.time || "",
+            dayTime: res.data.webinar.dayTime || "",
             language: res.data.webinar.language || "",
             price: String(res.data.webinar.price || "99"),
           });
@@ -45,52 +39,25 @@ const Hero = () => {
       .catch(() => console.log("Failed to fetch webinar details"));
   }, []);
 
-  // Countdown logic
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!webinar.date) return setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      const webinarDateTime = new Date(`${webinar.date}T${webinar.time}`).getTime();
-      const now = new Date().getTime();
-      const distance = webinarDateTime - now;
-      if (distance > 0) {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      }
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [webinar.date, webinar.time]);
-
-  // Handle Razorpay booking
   const handleBooking = () => {
-    const paymentLink = "   https://rzp.io/rzp/EAP6tcY";
+    const paymentLink = "https://rzp.io/rzp/EAP6tcY";
     window.open(paymentLink, "_blank");
-
-    // Show WhatsApp link after 5 sec
     setTimeout(() => setShowWhatsApp(true), 5000);
   };
 
-  // Admin update webinar
   const handleUpdateWebinar = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("https://pcos-webinar.onrender.com/api/webinars", {
         date: newDate,
-        day: newDay,
-        time: newTime,
+        dayTime: newDayTime,
         language: newLanguage,
         price: Number(newPrice),
       });
       if (res.data.success) {
         setWebinar({
           date: res.data.webinar.date,
-          day: res.data.webinar.day,
-          time: res.data.webinar.time,
+          dayTime: res.data.webinar.dayTime,
           language: res.data.webinar.language,
           price: String(res.data.webinar.price),
         });
@@ -111,52 +78,42 @@ const Hero = () => {
         transition={{ duration: 1 }}
         className="text-center w-full max-w-lg"
       >
-        {/* Headline */}
-        
-       
         <motion.h2 className="text-base sm:text-lg md:text-2xl mb-6 leading-relaxed">
           From Irregular Periods to Pregnancy — The Permanent Solution for PCOS & Infertility (No Supplements or Medicine)
         </motion.h2>
 
- {/* Subheading */}
         <motion.h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-snug">
           Ayisafarhan’s Step-by-Step Plan to Reverse PCOS and Get Pregnant Naturally
         </motion.h1>
 
-        {/* Date, Day, Time, Language */}
+        {/* ✅ Date, Day + Time, Language */}
         <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-          <p><span className="font-bold">Date:</span> {webinar.date ? new Date(webinar.date).toLocaleDateString() : "TBA"}</p>
-          <p><span className="font-bold">Day:</span> {webinar.day || "TBA"}</p>
-          <p><span className="font-bold">Time:</span> {webinar.time || "TBA"}</p>
-          <p><span className="font-bold">Language:</span> {webinar.language || "TBA"}</p>
-          <p className="text-red-600 font-semibold mt-2">*Limited seats available*</p>
+          <p>
+            <span className="font-bold">Date:</span>{" "}
+            {webinar.date ? new Date(webinar.date).toLocaleDateString() : "TBA"}
+          </p>
+          <p>
+            <span className="font-bold">Day & Time:</span>{" "}
+            {webinar.dayTime || "TBA"}
+          </p>
+          <p>
+            <span className="font-bold">Language:</span>{" "}
+            {webinar.language || "TBA"}
+          </p>
+          <p className="text-red-600 font-semibold mt-2">
+            *Limited seats available*
+          </p>
         </div>
 
-        {/* Countdown */}
-        <motion.div className="flex justify-center gap-2 sm:gap-4 mb-6 flex-wrap">
-          {Object.entries(timeLeft).map(([key, value]) => (
-            <div key={key} className="bg-white shadow-md rounded-lg p-2 sm:p-3 w-14 sm:w-16">
-              <p className="text-lg sm:text-2xl font-bold">{value}</p>
-              <p className="text-[10px] sm:text-xs uppercase">{key}</p>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Book Now */}
-<motion.button
-  className="bg-[#663398] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition text-base"
-  onClick={handleBooking}
-  animate={{
-    scale: [1, 1.15, 1], // 👈 zoom in (1 → 1.15) then zoom out (1.15 → 1)
-  }}
-  transition={{
-    duration: 1.5,       // speed
-    repeat: Infinity,    // infinite loop
-    ease: "easeInOut"
-  }}
->
-  Book Now ₹{webinar.price && !isNaN(webinar.price) ? webinar.price : 99} Only
-</motion.button>
+        <motion.button
+          className="bg-[#663398] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4b2671] transition text-base"
+          onClick={handleBooking}
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          Book Now ₹{webinar.price && !isNaN(webinar.price) ? webinar.price : 99} Only
+        </motion.button>
 
         {/* WhatsApp modal */}
         {showWhatsApp && (
@@ -205,16 +162,9 @@ const Hero = () => {
                   />
                   <input
                     type="text"
-                    placeholder="Day"
-                    value={newDay}
-                    onChange={(e) => setNewDay(e.target.value)}
-                    className="border px-4 py-2 rounded-lg"
-                    required
-                  />
-                  <input
-                    type="time"
-                    value={newTime}
-                    onChange={(e) => setNewTime(e.target.value)}
+                    placeholder="Day & Time (ex: Tuesday, 4 PM IST)"
+                    value={newDayTime}
+                    onChange={(e) => setNewDayTime(e.target.value)}
                     className="border px-4 py-2 rounded-lg"
                     required
                   />
