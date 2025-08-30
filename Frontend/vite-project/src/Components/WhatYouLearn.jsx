@@ -19,7 +19,7 @@ const WhatYouLearn = () => {
 
   return (
     <section
-      id="learn"
+      id="e-books"
       className="bg-gradient-to-r from-[#663398] to-[#9c4dcc] text-white px-6 py-16"
     >
       {/* Heading */}

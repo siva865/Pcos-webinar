@@ -9,7 +9,7 @@ const Footer = () => {
   const googleLink = "https://share.google/tdhiMKxs1nH1kCTzN";
 
   return (
-    <footer className="bg-[#FFB7C5] text-[#663398] py-8 flex flex-col md:flex-row justify-center items-center gap-10">
+    <footer id="contact" className="bg-[#FFB7C5] text-[#663398] py-8 flex flex-col md:flex-row justify-center items-center gap-10">
       {/* WhatsApp */}
       <div className="flex flex-col items-center">
         <a 

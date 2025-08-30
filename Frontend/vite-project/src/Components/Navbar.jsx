@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { HiOutlineMenu, HiX } from "react-icons/hi";
 import Logo from "../assets/Images/Logo.jpeg";
 
 const Navbar = ({ onAdminLogin }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginBox, setShowLoginBox] = useState(false);
   const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const links = [
+    { label: "Home", href: "#" },
+    { label: "About", href: "#about" },
+    { label: "E-Books", href: "#e-books" },
+    { label: "Fertility Stories", href: "#fertility stories" },
+    { label: "Contact", href: "#contact" },
+  ];
 
   // Persist login status using localStorage
   useEffect(() => {
@@ -46,7 +56,7 @@ const Navbar = ({ onAdminLogin }) => {
 
   return (
     <motion.nav
-      className="bg-white shadow-md px-6 py-3 flex items-center justify-between relative"
+      className="bg-white shadow-md px-6 py-3 flex items-center justify-between sticky top-0 z-50"
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -56,30 +66,29 @@ const Navbar = ({ onAdminLogin }) => {
         <motion.img src={Logo} className="h-12 w-auto object-contain" />
       </div>
 
-      {/* Right - Menu / Login / Logout */}
-      <div className="flex items-center space-x-4">
-        {!isLoggedIn ? (
-          <motion.div
-            className="w-10 h-10 rounded-full bg-[#FFB7C5] flex items-center justify-center cursor-pointer"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setShowLoginBox(true)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-[#663398]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      {/* Desktop Links */}
+      <ul className="hidden md:flex gap-6">
+        {links.map((link) => (
+          <li key={link.label}>
+            <a
+              href={link.href}
+              className="text-gray-700 hover:text-[#663398] transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </motion.div>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Desktop Login/Logout */}
+      <div className="hidden md:flex items-center space-x-4">
+        {!isLoggedIn ? (
+          <button
+            onClick={() => setShowLoginBox(true)}
+            className="bg-[#FFB7C5] px-4 py-2 rounded-lg text-[#663398] font-medium"
+          >
+            Admin Login
+          </button>
         ) : (
           <button
             className="bg-[#663398] text-white px-4 py-2 rounded-lg"
@@ -89,6 +98,61 @@ const Navbar = ({ onAdminLogin }) => {
           </button>
         )}
       </div>
+
+      {/* Mobile Hamburger */}
+      <button
+        className="md:hidden p-2"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        {mobileOpen ? <HiX size={24} /> : <HiOutlineMenu size={24} />}
+      </button>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="absolute top-full left-0 w-full bg-white shadow-md md:hidden"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+          >
+            <ul className="flex flex-col gap-4 p-4">
+              {links.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className="block text-gray-700 hover:text-[#663398] transition"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+              {!isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    setShowLoginBox(true);
+                    setMobileOpen(false);
+                  }}
+                  className="bg-[#FFB7C5] px-4 py-2 rounded-lg text-[#663398] font-medium"
+                >
+                  Admin Login
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileOpen(false);
+                  }}
+                  className="bg-[#663398] text-white px-4 py-2 rounded-lg"
+                >
+                  Logout
+                </button>
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Login Modal */}
       {showLoginBox && !isLoggedIn && (

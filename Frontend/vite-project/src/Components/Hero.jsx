@@ -71,7 +71,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="bg-[#FFB7C5] text-[#663398] min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-12 overflow-x-hidden">
+    <section id="#" className="bg-[#FFB7C5] text-[#663398] min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-12 overflow-x-hidden">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}

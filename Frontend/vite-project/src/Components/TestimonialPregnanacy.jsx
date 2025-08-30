@@ -110,7 +110,7 @@ const Testimonialpregnancy = () => {
   };
 
   return (
-    <section className="py-20 px-6 sm:px-10 md:px-20 lg:px-32 bg-gradient-to-r from-[#FFB7C5]/10 to-[#FFB7C5]/20 overflow-hidden">
+    <section id="fertility stories" className="py-20 px-6 sm:px-10 md:px-20 lg:px-32 bg-gradient-to-r from-[#FFB7C5]/10 to-[#FFB7C5]/20 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-[#663398] mb-6">
           PCOS to Pregnancy Success Stories
@@ -121,7 +121,7 @@ const Testimonialpregnancy = () => {
         </p>
 
         {/* Testimonials Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div  className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial, index) => (
             <div
               key={`${testimonial._id}-${index}`}
